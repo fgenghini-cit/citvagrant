@@ -14,4 +14,11 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
   end
+
+  # Config synced folder
+  if Vagrant::Util::Platform.windows?
+    config.vm.synced_folder ".", "/files"
+  else
+    config.vm.synced_folder ".", "/files", type: "nfs"
+  end
 end
