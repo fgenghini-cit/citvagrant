@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source variables.sh
+
 echo ">>> Start provisioning the install file"
 
 sudo add-apt-repository ppa:ondrej/php5-5.6
