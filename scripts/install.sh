@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source variables.sh
-
 echo ">>> Start provisioning"
 
 # Config to allow mysql installation
@@ -14,8 +12,8 @@ echo ">>> Installing..."
 echo -e "en_US.UTF-8 UTF-8\npt_BR ISO-8859-1\npt_BR.UTF-8 UTF-8" | sudo tee /var/lib/locales/supported.d/local
 sudo dpkg-reconfigure locales
 
-# PHP 5.6
-sudo add-apt-repository ppa:ondrej/php5-5.6
+# PHP
+sudo add-apt-repository ppa:ondrej/php5-"$VAGRANT_PHP_VERSION"
 
 # Update Again
 sudo apt-get update
@@ -57,10 +55,10 @@ sudo chown vagrant.vagrant /usr/local/bin/composer
 sudo chmod +x /usr/local/bin/composer
 
 # instalando Drush
-sudo -H -u vagrant bash -c 'composer global require drush/drush:8.*'
+sudo -H -u vagrant bash -c "composer global require drush/drush:${VAGRANT_DRUSH_VERSION}"
 
 # instalando coder + Code Sniffer
-sudo -H -u vagrant bash -c 'composer global require drupal/coder:~8.2.3'
+sudo -H -u vagrant bash -c "composer global require drupal/coder:${VAGRANT_CODER_VERSION}"
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcs /usr/local/bin
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcbf /usr/local/bin
 phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer
@@ -79,4 +77,3 @@ sudo chown -R vagrant.vagrant /home/vagrant/.app
 sudo chown -R vagrant.vagrant /home/vagrant/.composer
 
 sudo -H -u vagrant bash -c 'cd /files/docroot/sites && /home/vagrant/.composer/vendor/bin/drush dl registry_rebuild -y && /home/vagrant/.composer/vendor/bin/drush cache-clear drush'
-

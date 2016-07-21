@@ -5,6 +5,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.hostname = "vagrant.cfn"
   config.vm.box = "ubuntu/precise64"
+  config.vm.provision :shell, :path => "./vagrant/variables.sh"
   config.vm.provision :shell, :path => "./vagrant/install.sh"
   config.vm.provision :shell, :path => "./vagrant/config.sh"
 

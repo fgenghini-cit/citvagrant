@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source variables.sh
-
 echo ">>> Configurando o servidor"
 
 # Configura XDebug
@@ -25,23 +23,20 @@ sudo sed -i "s/html_errors = .*/html_errors = On/" /etc/php5/apache2/php.ini
 sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/cli/php.ini
 
-sudo sed -i "s/memory_limit = .*/memory_limit = 128M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/memory_limit = .*/memory_limit = 128M/" /etc/php5/cli/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/cli/php.ini
 
-sudo sed -i "s/max_execution_time = .*/max_execution_time = 300/" /etc/php5/apache2/php.ini
-sudo sed -i "s/max_execution_time = .*/max_execution_time = 300/" /etc/php5/cli/php.ini
-
-sudo sed -i "s/expose_php = .*/expose_php = Off/" /etc/php5/apache2/php.ini
-sudo sed -i "s/expose_php = .*/expose_php = Off/" /etc/php5/cli/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/cli/php.ini
 
 # http://stackoverflow.com/questions/6156259/sed-expression-dont-allow-optional-grouped-string
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = America/Sao_Paulo," /etc/php5/apache2/php.ini
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = America/Sao_Paulo," /etc/php5/cli/php.ini
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/apache2/php.ini
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/cli/php.ini
 
-sudo sed -i "s/post_max_size = .*/post_max_size = 256M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/post_max_size = .*/post_max_size = 256M/" /etc/php5/cli/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = 256M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = 256M/" /etc/php5/cli/php.ini
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/cli/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/cli/php.ini
 
 # MySQL Config
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
@@ -192,8 +187,8 @@ sudo chmod +x /usr/bin/cfntools
 
 # SSMTP
 sudo apt-get install ssmtp -y
-sudo sed -i "s/mailhub=.*/mailhub=smtp.gmail.com:587/" /etc/ssmtp/ssmtp.conf
-sudo sed -i "s/root=postmaster/root=youremail@ciandt.com/" /etc/ssmtp/ssmtp.conf
+sudo sed -i "s/mailhub=.*/mailhub=${VAGRANT_SMTP_ADDRESS}/" /etc/ssmtp/ssmtp.conf
+sudo sed -i "s/root=postmaster/root=${VAGRANT_SMTP_ROOT_EMAIL}/" /etc/ssmtp/ssmtp.conf
 echo "UseSTARTTLS=YES" | sudo tee -a /etc/ssmtp/ssmtp.conf
-echo "AuthUser=youremail@ciandt.com" | sudo tee -a /etc/ssmtp/ssmtp.conf
-echo "AuthPass=your_password" | sudo tee -a /etc/ssmtp/ssmtp.conf
+echo "AuthUser=${VAGRANT_SMTP_ROOT_EMAIL}" | sudo tee -a /etc/ssmtp/ssmtp.conf
+echo "AuthPass=${VAGRANT_SMTP_ROOT_EMAIL_PASSWORD}" | sudo tee -a /etc/ssmtp/ssmtp.conf
