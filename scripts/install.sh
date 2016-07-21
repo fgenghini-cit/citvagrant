@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source variables.sh
-
 echo ">>> Start provisioning the install file"
 
 # Config locale
@@ -42,12 +40,12 @@ sudo chown vagrant:vagrant /usr/local/bin/composer
 sudo chmod +x /usr/local/bin/composer
 
 # Install drush
-sudo -H -u vagrant bash -c 'composer global require drush/drush:7.*'
+sudo -H -u vagrant bash -c "composer global require drush/drush:${VAGRANT_DRUSH_VERSION}"
 
 echo "export PATH=\"/home/vagrant/.composer/vendor/bin:\$PATH\"" | sudo tee -a /home/vagrant/.bashrc
 
 # Install coder and code sniffer
-sudo -H -u vagrant bash -c 'composer global require "drupal/coder":"<8"'
+sudo -H -u vagrant bash -c "composer global require drupal/coder:${VAGRANT_CODER_VERSION}"
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcs /usr/local/bin
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcbf /usr/local/bin
 phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer

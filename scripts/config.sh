@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-source variables.sh
-
-echo ">>> Configurando o servidor"
-
-# acertando CodeSniffer
+# Configuring CodeSniffer.
 sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/Drupal /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Drupal'
 sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/drupalcs.drush.inc /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/drupalcs.drush.inc'
 sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/DrupalPractice /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/DrupalPractice'
@@ -17,59 +13,12 @@ sudo chown -R vagrant.vagrant /home/vagrant/.composer
 
 sudo -H -u vagrant bash -c 'cd /files/docroot/sites && /home/vagrant/.composer/vendor/bin/drush dl registry_rebuild -y && /home/vagrant/.composer/vendor/bin/drush cache-clear drush'
 
-# Set MySQL password
+# Configuring Mysql.
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
-
-# Locale system
-echo -e "en_US.UTF-8 UTF-8\npt_BR ISO-8859-1\npt_BR.UTF-8 UTF-8" | sudo tee /var/lib/locales/supported.d/local
-sudo dpkg-reconfigure locales
-
-# Configura XDebug
-cat << EOF | sudo tee -a /etc/php5/apache2/conf.d/xdebug.ini
-xdebug.scream=0
-xdebug.cli_color=1
-xdebug.show_local_vars=1
-xdebug.max_nesting_level=250
-
-xdebug.remote_enable = on
-xdebug.remote_connect_back = on
-xdebug.idekey = "vagrant"
-EOF
-
-# Define para exibir todos os erros, warnings e notices
-sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.ini
-sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_STRICT/" /etc/php5/cli/php.ini
-
-sudo sed -i "s/html_errors = .*/html_errors = On/" /etc/php5/apache2/php.ini
-
-sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
-sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/cli/php.ini
-
-sudo sed -i "s/memory_limit = .*/memory_limit = 128M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/memory_limit = .*/memory_limit = 128M/" /etc/php5/cli/php.ini
-
-sudo sed -i "s/max_execution_time = .*/max_execution_time = 300/" /etc/php5/apache2/php.ini
-sudo sed -i "s/max_execution_time = .*/max_execution_time = 300/" /etc/php5/cli/php.ini
-
-sudo sed -i "s/expose_php = .*/expose_php = Off/" /etc/php5/apache2/php.ini
-sudo sed -i "s/expose_php = .*/expose_php = Off/" /etc/php5/cli/php.ini
-
-# http://stackoverflow.com/questions/6156259/sed-expression-dont-allow-optional-grouped-string
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = America/Sao_Paulo," /etc/php5/apache2/php.ini
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = America/Sao_Paulo," /etc/php5/cli/php.ini
-
-sudo sed -i "s/post_max_size = .*/post_max_size = 256M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/post_max_size = .*/post_max_size = 256M/" /etc/php5/cli/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = 256M/" /etc/php5/apache2/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = 256M/" /etc/php5/cli/php.ini
-
-# MySQL Config
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 sudo mysql --password=root -u root --execute="GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 sudo service mysql restart
-
-# cria arquivo com credenciais do MySQL - ele não pedirá mais a senha
 MYCNFFILE=$(cat <<EOF
 [client]
 user=root
@@ -84,9 +33,43 @@ echo "${MYCNFFILE}" > /home/vagrant/.my.cnf
 chmod 0600 /home/vagrant/.my.cnf
 sudo chown vagrant /home/vagrant/.my.cnf
 
-# Apache Config
+# Locale system.
+echo -e "en_US.UTF-8 UTF-8\npt_BR ISO-8859-1\npt_BR.UTF-8 UTF-8" | sudo tee /var/lib/locales/supported.d/local
+sudo dpkg-reconfigure locales
 
-# altera usuário que roda o apache
+# Configuring XDebug.
+cat << EOF | sudo tee -a /etc/php5/apache2/conf.d/xdebug.ini
+xdebug.scream=0
+xdebug.cli_color=1
+xdebug.show_local_vars=1
+xdebug.max_nesting_level=250
+
+xdebug.remote_enable = on
+xdebug.remote_connect_back = on
+xdebug.idekey = "vagrant"
+EOF
+
+# Configuring PHP.
+sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.ini
+sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_STRICT/" /etc/php5/cli/php.ini
+sudo sed -i "s/html_errors = .*/html_errors = ${VAGRANT_PHP_HTML_ERRORS}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php5/cli/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/cli/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/cli/php.ini
+
+# http://stackoverflow.com/questions/6156259/sed-expression-dont-allow-optional-grouped-string
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/apache2/php.ini
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/cli/php.ini
+
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/cli/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/apache2/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/cli/php.ini
+
+# Apache Config
 sudo sed -i 's/User ${APACHE_RUN_USER}/User vagrant/g' /etc/apache2/apache2.conf
 sudo sed -i 's/Group ${APACHE_RUN_GROUP}/Group vagrant/g' /etc/apache2/apache2.conf
 
@@ -186,9 +169,7 @@ EOF
 echo "${VHOST}" > /etc/apache2/sites-available/advisor.conf
 sudo a2ensite advisor.conf
 
-
-
-echo ">>> Inicializando aplicação"
+echo ">>> Starting application"
 sudo ln -sf /files/vagrant/others /var/www/others
 sudo ln -sf /files/docroot /var/www/cfn
 sudo chown vagrant.vagrant /var/www/ -R
@@ -197,11 +178,10 @@ echo "<?php  phpinfo(); ?>" > /var/www/others/info.php
 
 sudo service apache2 restart
 
-# Ao efetuar login, já entra no diretório '/files'
+# Set the default SSH access to /files path.
 echo "cd /files" | sudo tee -a /home/vagrant/.bashrc
 
-echo ">>> Provisionamento realizado com sucesso"
-
+echo ">>> Done!"
 
 sudo ln -sf /files/vagrant/bin /home/vagrant/bin
 sudo chown -R vagrant.vagrant /home/vagrant/bin
@@ -211,10 +191,10 @@ echo "export PATH=\"/home/vagrant/.composer/vendor/bin:/home/vagrant/bin:\$PATH\
 sudo ln -s /files/vagrant/faker/app.php /usr/bin/cfntools
 sudo chmod +x /usr/bin/cfntools
 
-# SSMTP
+# SMTP
 sudo apt-get install ssmtp -y
-sudo sed -i "s/mailhub=.*/mailhub=smtp.gmail.com:587/" /etc/ssmtp/ssmtp.conf
-sudo sed -i "s/root=postmaster/root=youremail@ciandt.com/" /etc/ssmtp/ssmtp.conf
+sudo sed -i "s/mailhub=.*/mailhub=${VAGRANT_SMTP_ADDRESS}/" /etc/ssmtp/ssmtp.conf
+sudo sed -i "s/root=postmaster/root=${VAGRANT_SMTP_ROOT_EMAIL}/" /etc/ssmtp/ssmtp.conf
 echo "UseSTARTTLS=YES" | sudo tee -a /etc/ssmtp/ssmtp.conf
-echo "AuthUser=youremail@ciandt.com" | sudo tee -a /etc/ssmtp/ssmtp.conf
-echo "AuthPass=your_password" | sudo tee -a /etc/ssmtp/ssmtp.conf
+echo "AuthUser=${VAGRANT_SMTP_ROOT_EMAIL}" | sudo tee -a /etc/ssmtp/ssmtp.conf
+echo "AuthPass=${VAGRANT_SMTP_ROOT_EMAIL_PASSWORD}" | sudo tee -a /etc/ssmtp/ssmtp.conf
