@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # PHP
-export VAGRANT_PHP_VERSION="5.6"
 export VAGRANT_PHP_MEMORY_LIMIT="128M"
 export VAGRANT_PHP_MAX_EXECUTION_TIME="300"
 export VAGRANT_PHP_TIMEZONE="America/Sao_Paulo"
@@ -11,10 +10,10 @@ export VAGRANT_PHP_HTML_ERRORS="On"
 export VAGRANT_PHP_DISPLAY_ERRORS="On"
 
 # Drush
-export VAGRANT_DRUSH_VERSION="8.*"
+export VAGRANT_DRUSH_VERSION="7.*"
 
 # Drupal Coder
-export VAGRANT_CODER_VERSION="~8.2.3"
+export VAGRANT_CODER_VERSION="<8"
 
 # SMTP
 export VAGRANT_SMTP_ADDRESS="smtp.gmail.com:587"
