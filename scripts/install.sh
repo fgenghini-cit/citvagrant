@@ -4,52 +4,50 @@ source variables.sh
 
 echo ">>> Start provisioning the install file"
 
-sudo add-apt-repository ppa:ondrej/php5-5.6
+# Config locale
+echo -e "en_US.UTF-8 UTF-8\npt_BR ISO-8859-1\npt_BR.UTF-8 UTF-8" | sudo tee /var/lib/locales/supported.d/local
+sudo dpkg-reconfigure locales
+
+sudo add-apt-repository ppa:ondrej/php -y
+sudo add-apt-repository ppa:ondrej/apache2 -y
 
 sudo apt-get update
+sudo apt-get install php5.6 -y
+sudo apt-get install git-core -y
 
-sudo apt-get install -y \
-vim \
-curl \
-build-essential \
-python-software-properties \
-git-core \
-nfs-common \
-portmap \
-mysql-server \
-mysql-client \
-apache2 \
-libapache2-mod-php5 \
-php5 \
-php5-cli \
-php5-mysql \
-php5-curl \
-php5-gd \
-php5-imagick \
-php5-mcrypt \
-php5-xdebug \
-php5-dev \
-php-pear \
-php5-intl \
-php5-json \
-php5-imap \
-php5-oauth \
-php5-readline \
-imagemagick
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
+sudo apt-get install mysql-server -y
+sudo apt-get install mysql-client -y
+
+sudo apt-get install apache2 -y
+sudo apt-get install libapache2-mod-php5.6 -y
+
+sudo apt-get install php5.6-mysql -y
+sudo apt-get install php5.6-curl -y
+sudo apt-get install php5.6-gd -y
+sudo apt-get install php5.6-imagick -y
+sudo apt-get install php5.6-mcrypt -y
+sudo apt-get install php5.6-dev -y
+sudo apt-get install php5.6-imap -y
+sudo apt-get install php5.6-xdebug -y
+
+sudo apt-get install unzip -y
 
 # Install composer global
+echo ">>> installing composer"
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
-sudo chown vagrant.vagrant /usr/local/bin/composer
+sudo chown vagrant:vagrant /usr/local/bin/composer
 sudo chmod +x /usr/local/bin/composer
 
 # Install drush
-sudo -H -u vagrant bash -c 'composer global require drush/drush:8.*'
+sudo -H -u vagrant bash -c 'composer global require drush/drush:7.*'
+
+echo "export PATH=\"/home/vagrant/.composer/vendor/bin:\$PATH\"" | sudo tee -a /home/vagrant/.bashrc
 
 # Install coder and code sniffer
-sudo -H -u vagrant bash -c 'composer global require drupal/coder:~8.2.3'
+sudo -H -u vagrant bash -c 'composer global require "drupal/coder":"<8"'
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcs /usr/local/bin
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcbf /usr/local/bin
 phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer
-echo "alias drupalcs=\"phpcs --standard=Drupal\"" | sudo tee -a /home/vagrant/.bashrc
-echo "alias drupal-debug-theme=\"drush vset theme_debug\"" | sudo tee -a /home/vagrant/.bashrc
