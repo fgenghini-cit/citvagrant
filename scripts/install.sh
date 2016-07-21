@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source variables.sh
+
 echo ">>> Start provisioning"
 
 # Config to allow mysql installation
@@ -77,7 +79,4 @@ sudo chown -R vagrant.vagrant /home/vagrant/.app
 sudo chown -R vagrant.vagrant /home/vagrant/.composer
 
 sudo -H -u vagrant bash -c 'cd /files/docroot/sites && /home/vagrant/.composer/vendor/bin/drush dl registry_rebuild -y && /home/vagrant/.composer/vendor/bin/drush cache-clear drush'
-
-############### Daqui pra baixo é a configuracao não instalacao
-
 

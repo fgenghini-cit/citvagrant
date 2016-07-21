@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source variables.sh
+
 echo ">>> Configurando o servidor"
 
 # Configura XDebug
