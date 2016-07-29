@@ -3,7 +3,7 @@
 
 Vagrant.configure(2) do |config|
 
-  config.vm.hostname = "vagrant.cfn"
+  config.vm.hostname = "vagrant.pfe"
   config.vm.box = "ubuntu/precise64"
   config.vm.provision :shell, :path => "./scripts/install.sh"
   config.vm.provision :shell, :path => "./scripts/config.sh"
