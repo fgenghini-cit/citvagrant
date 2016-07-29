@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source /files/scripts/variables.sh
+
 # Configuring Mysql.
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 sudo mysql --password=root -u root --execute="GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES;"
@@ -31,24 +33,23 @@ xdebug.idekey = "vagrant"
 EOF
 
 # Configuring PHP.
-sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.ini
-sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_STRICT/" /etc/php5/cli/php.ini
-sudo sed -i "s/html_errors = .*/html_errors = ${VAGRANT_PHP_HTML_ERRORS}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php5/cli/php.ini
-sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php5/cli/php.ini
-sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php5/cli/php.ini
+sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_STRICT/" /etc/php/5.6/cli/php.ini
+sudo sed -i "s/html_errors = .*/html_errors = ${VAGRANT_PHP_HTML_ERRORS}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/display_errors = .*/display_errors = ${VAGRANT_PHP_DISPLAY_ERRORS}/" /etc/php/5.6/cli/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/memory_limit = .*/memory_limit = ${VAGRANT_PHP_MEMORY_LIMIT}/" /etc/php/5.6/cli/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/max_execution_time = .*/max_execution_time = ${VAGRANT_PHP_MAX_EXECUTION_TIME}/" /etc/php/5.6/cli/php.ini
 
 # http://stackoverflow.com/questions/6156259/sed-expression-dont-allow-optional-grouped-string
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/apache2/php.ini
-sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php5/cli/php.ini
-
-sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php5/cli/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/apache2/php.ini
-sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php5/cli/php.ini
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php/5.6/apache2/php.ini
+sudo sed -r -i "s,;?date.timezone =.*,date.timezone = ${VAGRANT_PHP_TIMEZONE}," /etc/php/5.6/cli/php.ini
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/post_max_size = .*/post_max_size = ${VAGRANT_PHP_POST_MAX_SIZE}/" /etc/php/5.6/cli/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php/5.6/apache2/php.ini
+sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLOAD_MAX_FILE_SIZE}/" /etc/php/5.6/cli/php.ini
 
 # Apache Config
 sudo sed -i 's/User ${APACHE_RUN_USER}/User vagrant/g' /etc/apache2/apache2.conf
