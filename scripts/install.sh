@@ -50,17 +50,10 @@ sudo chmod +x /usr/local/bin/composer
 
 echo ">>> Installing Drush"
 sudo -H -u vagrant bash -c 'composer global require "drush/drush":"'$VAGRANT_DRUSH_VERSION'"'
-echo "export PATH=\"/home/vagrant/.composer/vendor/bin:\$PATH\"" | sudo tee -a /home/vagrant/.bashrc
-source /home/vagrant/.bashrc
+sudo ln -s /home/vagrant/.composer/vendor/bin/drush /usr/local/bin
 
 echo ">>> Installing Coder and Code Sniffer"
 sudo -H -u vagrant bash -c 'composer global require "drupal/coder":"'${VAGRANT_CODER_VERSION}'"'
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcs /usr/local/bin
-sudo ln -s /home/vagrant/.composer/vendor/bin/phpcbf /usr/local/bin
 phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer
-
-# download coder module
-#drush -vy dl coder-7.x-2.5 --destination=/home/vagrant/.drush/
-
-# Clear drush cache
-# drush cache-clear drush
+drush -vy dl coder-7.x-2.5 --destination=/home/vagrant/.drush/
