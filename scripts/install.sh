@@ -57,3 +57,5 @@ sudo -H -u vagrant bash -c 'composer global require "drupal/coder":"'${VAGRANT_C
 sudo ln -s /home/vagrant/.composer/vendor/bin/phpcs /usr/local/bin
 phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer
 drush -vy dl coder-7.x-2.5 --destination=/home/vagrant/.drush/
+drush -vy dl registry_rebuild --destination=/home/vagrant/.drush/
+sudo chown vagrant:vagrant -R /home/vagrant/.drush
