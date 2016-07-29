@@ -1,21 +1,6 @@
 #!/usr/bin/env bash
 
-# Configuring CodeSniffer.
-sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/Drupal /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Drupal'
-sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/drupalcs.drush.inc /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/drupalcs.drush.inc'
-sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.composer/vendor/drupal/coder/coder_sniffer/DrupalPractice /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/DrupalPractice'
-sudo -H -u vagrant bash -c 'mkdir /home/vagrant/.app/'
-sudo -H -u vagrant bash -c 'git clone --branch master http://git.drupal.org/sandbox/coltrane/1921926.git /home/vagrant/.app/drupalsecure_code_sniffs'
-sudo -H -u vagrant bash -c 'ln -s /home/vagrant/.app/drupalsecure_code_sniffs/DrupalSecure /home/vagrant/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/DrupalSecure'
-
-sudo chown -R vagrant.vagrant /home/vagrant/.app
-sudo chown -R vagrant.vagrant /home/vagrant/.composer
-
-sudo -H -u vagrant bash -c 'cd /files/docroot/sites && /home/vagrant/.composer/vendor/bin/drush dl registry_rebuild -y && /home/vagrant/.composer/vendor/bin/drush cache-clear drush'
-
 # Configuring Mysql.
-sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
-sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 sudo mysql --password=root -u root --execute="GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 sudo service mysql restart
@@ -32,10 +17,6 @@ EOF
 echo "${MYCNFFILE}" > /home/vagrant/.my.cnf
 chmod 0600 /home/vagrant/.my.cnf
 sudo chown vagrant /home/vagrant/.my.cnf
-
-# Locale system.
-echo -e "en_US.UTF-8 UTF-8\npt_BR ISO-8859-1\npt_BR.UTF-8 UTF-8" | sudo tee /var/lib/locales/supported.d/local
-sudo dpkg-reconfigure locales
 
 # Configuring XDebug.
 cat << EOF | sudo tee -a /etc/php5/apache2/conf.d/xdebug.ini
