@@ -1,1 +1,3 @@
 .vagrant
+projects/platforms/*
+projects/repos/*
