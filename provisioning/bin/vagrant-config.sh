@@ -55,7 +55,12 @@ sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLO
 sudo sed -i 's/User ${APACHE_RUN_USER}/User vagrant/g' /etc/apache2/apache2.conf
 sudo sed -i 's/Group ${APACHE_RUN_GROUP}/Group vagrant/g' /etc/apache2/apache2.conf
 
+# Enable rewrite module
 sudo a2enmod rewrite
+
+# Enable and config SSL
+sudo a2enmod ssl
+sudo service apache2 restart
 
 sudo a2dissite 000-default
 VHOST=$(cat <<EOF
