@@ -21,7 +21,7 @@ chmod 0600 /home/vagrant/.my.cnf
 sudo chown vagrant /home/vagrant/.my.cnf
 
 # Configuring XDebug.
-cat << EOF | sudo tee -a /etc/php5/apache2/conf.d/xdebug.ini
+cat << EOF | sudo tee -a /etc/php/5.6/apache2/conf.d/20-xdebug.ini
 xdebug.scream=0
 xdebug.cli_color=1
 xdebug.show_local_vars=1
