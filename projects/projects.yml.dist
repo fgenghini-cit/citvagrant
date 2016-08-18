@@ -8,7 +8,7 @@ project1:
       mysql:
         host: localhost
         user: root
-        passwd: admin
+        passwd: root
         db: database
 
 project2:
