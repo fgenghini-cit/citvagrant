@@ -2,6 +2,7 @@
 
 import os
 import yaml
+import logging
 
 def main():
     """
@@ -10,8 +11,17 @@ def main():
 
     for project, cfg in yaml.load(open("/files/projects/projects.yml", 'r')).iteritems():
         repo_name = cfg['link']['repo']
+
         platform_path = "/files/projects/platforms/%s" % cfg['link']['platform']
+        if not os.path.isdir(platform_path):
+            logging.warning("%s dir not found. Check platform configuration on projects.yml." % platform_path)
+            continue
+
         repo_docroot = "/files/projects/repos/%s/source/deploy" % repo_name
+        if not os.path.isdir(repo_docroot):
+            logging.warning("%s dir not found. Check repo configuration on projects.yml." % repo_docroot)
+            continue
+
         multisite_path = "%s/sites/%s.localhost" % (platform_path, repo_name)
         sites_php = "%s/sites/sites.php" % platform_path
 
