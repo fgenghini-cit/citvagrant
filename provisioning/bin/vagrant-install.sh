@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /files/scripts/variables.sh
+source /files/provisioning/bin/vagrant-variables.sh
 
 echo ">>> Start provisioning the install file"
 

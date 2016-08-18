@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /files/scripts/variables.sh
+source /files/provisioning/bin/vagrant-variables.sh
 
 # Configuring Mysql.
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
