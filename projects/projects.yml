@@ -1,25 +1,25 @@
 project1:
   link:
-    platform: "platform-1"
-    repo: "repo1"
+    platform: "platform-pfizer-7.x-2.5.17"
+    repo: "pfpremarincom"
 
   drupal:
     settings:
       mysql:
         host: localhost
         user: root
-        passwd: admin
-        db: database
+        passwd: root
+        db: pfpremarincom
 
-project2:
-  link:
-    platform: "platform-2"
-    repo: "repo2"
-
-  drupal:
-    settings:
-      mysql:
-        host: localhost
-        user: root
-        passwd: admin
-        db: database
+# project2:
+#   link:
+#     platform: "platform-2"
+#     repo: "repo2"
+#
+#   drupal:
+#     settings:
+#       mysql:
+#         host: localhost
+#         user: root
+#         passwd: admin
+#         db: database
