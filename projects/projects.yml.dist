@@ -1,25 +1,25 @@
-project1:
-  link:
-    platform: "platform-1"
-    repo: "repo1"
+# project1:
+#   link:
+#     platform: "platform-1"
+#     repo: "repo1"
+#
+#   drupal:
+#     settings:
+#       mysql:
+#         host: localhost
+#         user: root
+#         passwd: root
+#         db: database
 
-  drupal:
-    settings:
-      mysql:
-        host: localhost
-        user: root
-        passwd: root
-        db: database
-
-project2:
-  link:
-    platform: "platform-2"
-    repo: "repo2"
-
-  drupal:
-    settings:
-      mysql:
-        host: localhost
-        user: root
-        passwd: admin
-        db: database
+# project2:
+#   link:
+#     platform: "platform-2"
+#     repo: "repo2"
+#
+#   drupal:
+#     settings:
+#       mysql:
+#         host: localhost
+#         user: root
+#         passwd: admin
+#         db: database
