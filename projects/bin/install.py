@@ -28,7 +28,27 @@ def main():
         sites_php_file = open(sites_php, 'ab+')
         if repo_name not in sites_php_file.read():
             sites_php_file.write("$sites['%s.localhost'] = '%s.localhost';\n" % (repo_name, repo_name))
+        sites_php_file.close()
 
+        mysql = cfg['drupal']['settings']['mysql']
+        mapping = {
+            '[[DATABASENAME]]': mysql['db'],
+            '[[USERNAME]]': mysql['user'],
+            '[[PASSWORD]]': mysql['passwd'],
+            '[[LOCALHOST]]': mysql['host'],
+        }
+        settings_php_content = replace_file_content('/files/provisioning/skel/default.settings.php', mapping)
+        settings_php_file = open(repo_docroot + '/settings.php', 'w+')
+        settings_php_file.write(settings_php_content)
+        settings_php_file.close()
+
+def replace_file_content(file, dic):
+    """ Find and replace file content. """
+    source = open(file)
+    content = source.read()
+    for i, j in dic.items():
+        content = content.replace(i, j)
+    return content
 
 if __name__ == '__main__':
     main()
