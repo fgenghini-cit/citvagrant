@@ -1,3 +1,4 @@
 .vagrant
 projects/platforms/*
 projects/repos/*
+projects/projects.yml
