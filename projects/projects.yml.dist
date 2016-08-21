@@ -1,6 +1,6 @@
 # project1:
 #   link:
-#     platform: "platform-1"
+#     platform: "platform-x.x"
 #     repo: "repo1"
 #
 #   drupal:
@@ -10,10 +10,13 @@
 #         user: root
 #         passwd: root
 #         db: database
+#
+#       confs:
+#         theme_debug: 1
 
 # project2:
 #   link:
-#     platform: "platform-2"
+#     platform: "platform-y.y"
 #     repo: "repo2"
 #
 #   drupal:
@@ -21,5 +24,8 @@
 #       mysql:
 #         host: localhost
 #         user: root
-#         passwd: admin
+#         passwd: root
 #         db: database
+#
+#       confs:
+#         theme_debug: 1

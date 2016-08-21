@@ -212,16 +212,6 @@
  *   );
  * @endcode
  */
-$databases = array();
-
-$databases['default']['default'] = array(
-  'driver' => 'mysql',
-  'database' => '[[DATABASENAME]]',
-  'username' => '[[USERNAME]]',
-  'password' => '[[PASSWORD]]',
-  'host' => '[[LOCALHOST]]',
-  'prefix' => '',
-);
 
 /**
  * Access control for update.php script.
@@ -593,6 +583,17 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * Remove the leading hash sign to enable.
  */
 # $conf['theme_debug'] = TRUE;
+
+$databases = array();
+
+$databases['default']['default'] = array(
+  'driver' => 'mysql',
+  'database' => '[[DATABASENAME]]',
+  'username' => '[[USERNAME]]',
+  'password' => '[[PASSWORD]]',
+  'host' => '[[LOCALHOST]]',
+  'prefix' => '',
+);
 
 /**
  * Include a local settings file if it exists.

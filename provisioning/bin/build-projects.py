@@ -31,11 +31,18 @@ def main():
         create_sites_php(platform_path, repo_name)
 
         # Creates settings.php.
+        if not 'drupal' in cfg:
+            cfg['drupal'] = dict()
+            cfg['drupal']['settings'] = dict()
+
         settings = cfg['drupal']['settings']
-        create_settings_php(settings, repo_docroot)
+        create_settings_php(settings, repo_docroot, repo_name)
 
         # Configure Apache Vhost.
         configure_site_apache_vhost(platform_path, repo_name)
+
+        # Configure database.
+
 
 
 def create_site_symbolic_link(platform_path, repo_name):
@@ -61,10 +68,22 @@ def create_sites_php(platform_path, repo_name):
         sites_php_file.write("$sites['%s.localhost'] = '%s.localhost';\n" % (repo_name, repo_name))
     sites_php_file.close()
 
-def create_settings_php(settings, repo_docroot):
+def create_settings_php(settings, repo_docroot, repo_name):
     """ Creates and populates settings.php """
 
+    if (settings is None):
+        settings = dict()
+
     # Add MySQL settings.
+    if not 'mysql' in settings:
+        # Default values, if the configuration are not defined on projects.yml.
+        settings['mysql'] = {
+            'db': repo_name,
+            'user': 'root',
+            'passwd': 'root',
+            'host': 'localhost',
+        }
+
     mysql = settings['mysql']
     mapping = {
         '[[DATABASENAME]]': mysql['db'],
@@ -76,6 +95,8 @@ def create_settings_php(settings, repo_docroot):
     settings_php_file = open(repo_docroot + '/settings.php', 'w+')
     settings_php_file.write(settings_php_content)
     settings_php_file.close()
+
+    # TODO: Add support to conf variables.
 
 def configure_site_apache_vhost(platform_path, repo_name):
     """ Creates and populates Apache Vhost """
