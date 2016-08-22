@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import shutil
 import yaml
-import logging
 
 def main():
     """
@@ -13,8 +13,11 @@ def main():
 
     for project, cfg in yaml.load(open("/files/projects/projects.yml", 'r')).iteritems():
         repo_name = cfg['link']['repo']
+        platform_name = cfg['link']['platform']
+        platform_path = "/files/projects/platforms/%s" % platform_name
 
-        platform_path = "/files/projects/platforms/%s" % cfg['link']['platform']
+        logging.info('Building "%s" with "%s" platform' % (repo_name, platform_name))
+
         if not os.path.isdir(platform_path):
             logging.warning("%s dir not found. Check platform configuration on projects.yml." % platform_path)
             continue
@@ -25,9 +28,11 @@ def main():
             continue
 
         # Creates symbolic link from repo to platform.
+        logging.info("Creating Symbolic link %s --> %s" % (platform_path, repo_name))
         create_site_symbolic_link(platform_path, repo_name)
 
         # Creates sites.php.
+        logging.info("Creating and configuring sites.php")
         create_sites_php(platform_path, repo_name)
 
         # Creates settings.php.
@@ -36,9 +41,11 @@ def main():
             cfg['drupal']['settings'] = dict()
 
         settings = cfg['drupal']['settings']
+        logging.info("Creating and configuring settings.php")
         create_settings_php(settings, repo_docroot, repo_name)
 
         # Configure Apache Vhost.
+        logging.info("Creating and configuring apache vhost file.")
         configure_site_apache_vhost(platform_path, repo_name)
 
         # Configure database.
@@ -91,12 +98,18 @@ def create_settings_php(settings, repo_docroot, repo_name):
         '[[PASSWORD]]': mysql['passwd'],
         '[[LOCALHOST]]': mysql['host'],
     }
+    settings_php_path = "%s/settings.php" % repo_docroot
     settings_php_content = replace_file_content('/files/provisioning/skel/default.settings.php', mapping)
-    settings_php_file = open(repo_docroot + '/settings.php', 'w+')
+    settings_php_file = open(settings_php_path, 'w+')
     settings_php_file.write(settings_php_content)
     settings_php_file.close()
 
-    # TODO: Add support to conf variables.
+    # Add conf variables.
+    if 'confs' in settings and settings['confs'] is not None:
+        with open(settings_php_path, "a") as settings_php_file:
+            for conf, conf_value in settings['confs'].iteritems():
+                settings_php_file.write("$conf['%s'] = \"%s\";\n" % (conf, conf_value))
+        settings_php_file.close()
 
 def configure_site_apache_vhost(platform_path, repo_name):
     """ Creates and populates Apache Vhost """
@@ -123,4 +136,8 @@ def replace_file_content(file, dic):
     return content
 
 if __name__ == '__main__':
+    # Setup logging.
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
     main()
