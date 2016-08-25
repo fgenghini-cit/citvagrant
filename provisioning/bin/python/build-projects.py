@@ -67,6 +67,7 @@ def create_sites_php(platform_path, repo_name):
     sites_php = "%s/sites/sites.php" % platform_path
     if not os.path.exists(sites_php):
         sites_php_file = open(sites_php, 'w+')
+        sites_php_file.write("<?php\n")
         sites_php_file.close()
 
     # Append the multi-site repo variable if it does not exists.
