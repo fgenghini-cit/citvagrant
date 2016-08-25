@@ -72,7 +72,7 @@ def create_sites_php(platform_path, repo_name):
     # Append the multi-site repo variable if it does not exists.
     sites_php_file = open(sites_php, 'ab+')
     if repo_name not in sites_php_file.read():
-        sites_php_file.write("$sites['%s.localhost'] = '%s.localhost';\n" % (repo_name, repo_name))
+        sites_php_file.write("$sites['%s'] = '%s.localhost';\n" % (repo_name, repo_name))
     sites_php_file.close()
 
 def create_settings_php(settings, repo_docroot, repo_name):
