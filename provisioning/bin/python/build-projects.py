@@ -108,7 +108,7 @@ def create_settings_php(settings, repo_docroot, repo_name):
     if 'confs' in settings and settings['confs'] is not None:
         with open(settings_php_path, "a") as settings_php_file:
             for conf, conf_value in settings['confs'].iteritems():
-                settings_php_file.write("$conf['%s'] = \"%s\";\n" % (conf, conf_value))
+                settings_php_file.write("$conf['%s.localhost'] = \"%s\";\n" % (conf, conf_value))
         settings_php_file.close()
 
 def configure_site_apache_vhost(platform_path, repo_name):
@@ -121,7 +121,7 @@ def configure_site_apache_vhost(platform_path, repo_name):
 
     apache_vhost_skel = "/files/provisioning/skel/vhost.skel.conf"
     vhost_content = replace_file_content(apache_vhost_skel, token_mapping)
-    apache_vhost_dest = "/etc/apache2/sites-enabled/%s.localhost" % repo_name
+    apache_vhost_dest = "/etc/apache2/sites-enabled/%s.localhost.conf" % repo_name
     vhost = open(apache_vhost_dest, 'w+')
     vhost.write(vhost_content)
     vhost.close()
