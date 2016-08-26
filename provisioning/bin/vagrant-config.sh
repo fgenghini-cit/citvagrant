@@ -55,131 +55,23 @@ sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = ${VAGRANT_PHP_UPLO
 sudo sed -i 's/User ${APACHE_RUN_USER}/User vagrant/g' /etc/apache2/apache2.conf
 sudo sed -i 's/Group ${APACHE_RUN_GROUP}/Group vagrant/g' /etc/apache2/apache2.conf
 
-# Enable rewrite module
 sudo a2enmod rewrite
 
-# Enable and config SSL
 sudo a2enmod ssl
-sudo service apache2 restart
 
 sudo a2dissite 000-default
-VHOST=$(cat <<EOF
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    #ServerName vagrant.cfn
-
-    DocumentRoot /var/www/others/
-
-    <Directory /var/www/others/>
-         RewriteBase /
-         Options Indexes FollowSymLinks
-         AllowOverride All
-         Order allow,deny
-         allow from all
-    </Directory>
-
-
-    # Possible values include: debug, info, notice, warn, error, crit,
-    # alert, emerg.
-    LogLevel warn
-
-    CustomLog /var/log/apache2/access.log combined
-    ErrorLog /var/log/apache2/error.log
-
-</VirtualHost>
-EOF
-)
-echo "${VHOST}" > /etc/apache2/sites-available/others.conf
-sudo a2ensite others.conf
-
-VHOST=$(cat <<EOF
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName easysite.vagrant.cfn
-    ServerAlias easysite.cfn
-
-    DocumentRoot /var/www/cfn/
-
-    <Directory /var/www/cfn/>
-         RewriteBase /
-         Options Indexes FollowSymLinks
-         AllowOverride All
-         Order allow,deny
-         allow from all
-    </Directory>
-
-
-    # Possible values include: debug, info, notice, warn, error, crit,
-    # alert, emerg.
-    LogLevel warn
-
-    CustomLog /var/log/apache2/access.log combined
-    ErrorLog /var/log/apache2/error.log
-
-</VirtualHost>
-EOF
-)
-echo "${VHOST}" > /etc/apache2/sites-available/easysite.conf
-sudo a2ensite easysite.conf
-
-VHOST=$(cat <<EOF
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName advisor1.vagrant.cfn
-    ServerAlias advisor1.cfn
-    ServerAlias advisor2.vagrant.cfn
-    ServerAlias advisor3.vagrant.cfn
-    ServerAlias advisor4.vagrant.cfn
-    ServerAlias advisor.vagrant.cfn
-
-    DocumentRoot /var/www/cfn/
-
-    <Directory /var/www/cfn/>
-         RewriteBase /
-         Options Indexes FollowSymLinks
-         AllowOverride All
-         Order allow,deny
-         allow from all
-    </Directory>
-
-
-    # Possible values include: debug, info, notice, warn, error, crit,
-    # alert, emerg.
-    LogLevel warn
-
-    CustomLog /var/log/apache2/access.log combined
-    ErrorLog /var/log/apache2/error.log
-
-</VirtualHost>
-EOF
-)
-echo "${VHOST}" > /etc/apache2/sites-available/advisor.conf
-sudo a2ensite advisor.conf
-
-echo ">>> Starting application"
-sudo ln -sf /files/vagrant/others /var/www/others
-sudo ln -sf /files/docroot /var/www/cfn
-sudo chown vagrant.vagrant /var/www/ -R
-
-echo "<?php  phpinfo(); ?>" > /var/www/others/info.php
 
 sudo service apache2 restart
 
 # Set the default SSH access to /files path.
 echo "cd /files" | sudo tee -a /home/vagrant/.bashrc
 
-echo ">>> Done!"
-
-sudo ln -sf /files/vagrant/bin /home/vagrant/bin
+sudo ln -sf /files/projects/bin /home/vagrant/bin
 sudo chown -R vagrant.vagrant /home/vagrant/bin
 sudo chmod +x /home/vagrant/bin/*
 echo "export PATH=\"/home/vagrant/.composer/vendor/bin:/home/vagrant/bin:\$PATH\"" | sudo tee -a /home/vagrant/.bashrc
 
-sudo ln -s /files/vagrant/faker/app.php /usr/bin/cfntools
-sudo chmod +x /usr/bin/cfntools
-
 # SMTP
-sudo apt-get install ssmtp -y
 sudo sed -i "s/mailhub=.*/mailhub=${VAGRANT_SMTP_ADDRESS}/" /etc/ssmtp/ssmtp.conf
 sudo sed -i "s/root=postmaster/root=${VAGRANT_SMTP_ROOT_EMAIL}/" /etc/ssmtp/ssmtp.conf
 echo "UseSTARTTLS=YES" | sudo tee -a /etc/ssmtp/ssmtp.conf

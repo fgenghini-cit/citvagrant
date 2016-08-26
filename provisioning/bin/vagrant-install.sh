@@ -59,3 +59,6 @@ phpcs --config-set installed_paths /home/vagrant/.composer/vendor/drupal/coder/c
 drush -vy dl coder-7.x-2.5 --destination=/home/vagrant/.drush/
 drush -vy dl registry_rebuild --destination=/home/vagrant/.drush/
 sudo chown vagrant:vagrant -R /home/vagrant/.drush
+
+echo ">>> Installing STMP"
+sudo apt-get install ssmtp -y
