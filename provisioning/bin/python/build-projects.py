@@ -4,7 +4,9 @@
 import logging
 import os
 import shutil
+import subprocess
 import yaml
+
 
 def main():
     """
@@ -22,7 +24,8 @@ def main():
             logging.warning("%s dir not found. Check platform configuration on projects.yml." % platform_path)
             continue
 
-        repo_docroot = "/files/projects/repos/%s/source/deploy" % repo_name
+        repo = "/files/projects/repos/%s" % repo_name
+        repo_docroot = "%s/source/deploy" % repo
         if not os.path.isdir(repo_docroot):
             logging.warning("%s dir not found. Check repo configuration on projects.yml." % repo_docroot)
             continue
@@ -45,11 +48,60 @@ def main():
         create_settings_php(settings, repo_docroot, repo_name)
 
         # Configure Apache Vhost.
-        logging.info("Creating and configuring apache vhost file.")
+        logging.info("Creating and configuring apache vhost file")
         configure_site_apache_vhost(platform_path, repo_name)
 
         # Configure database.
+        configure_database(repo_name, settings)
 
+        # Restart Apache.
+        os.system("sudo service apache2 restart")
+
+
+def configure_database(repo_name, settings):
+    """ Creates and config mysql database. """
+
+    repo = "/files/projects/repos/%s" % repo_name
+
+    # Check if project.yml contain the database info.
+    if not 'mysql' in settings or settings['mysql']['host'] != 'localhost':
+        logging.info("Skipping database creation. Project is using an external database config")
+        return
+
+    # Check if database.sql exist.
+    database_path = "%s/source/db/database.sql" % repo
+    if not os.path.isfile(database_path):
+        logging.info("Skipping database creation, database.sql not found")
+        return
+
+    # Check if database exists.
+    logging.info("Checking if database '%s' exists" % repo_name)
+    try:
+        subprocess.check_output(
+            "mysql -u root -proot -e 'use %s' || exit 1" % repo_name,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
+        logging.info("Database '%s' already exists, skipping database creation" % repo_name)
+    except subprocess.CalledProcessError as e:
+        logging.info("Database doesn't exist, creating '%s'" % repo_name)
+
+        try:
+            # Create database.
+            subprocess.check_call(["mysql", "-u", "root", "-e", "CREATE DATABASE %s" % repo_name])
+            logging.info("Database '%s' created" % repo_name)
+
+            # Import database.
+            logging.info("Importing Database Dump")
+            proc = subprocess.Popen(["mysql", "--user=root", "--password=root", repo_name],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE
+            )
+            out, err = proc.communicate(file(database_path).read())
+            logging.info("Database '%s' successfully imported" % database_path)
+
+        except subprocess.CalledProcessError as e:
+            print "Database '%s' installation error" % repo_name
 
 
 def create_site_symbolic_link(platform_path, repo_name):
@@ -60,6 +112,7 @@ def create_site_symbolic_link(platform_path, repo_name):
 
     if not os.path.islink(multisite_path):
         os.symlink(repo_docroot, multisite_path)
+
 
 def create_sites_php(platform_path, repo_name):
     """ Creates and populates sites.php """
@@ -74,6 +127,7 @@ def create_sites_php(platform_path, repo_name):
     if repo_name not in sites_php_file.read():
         sites_php_file.write("$sites['%s.localhost'] = '%s.localhost';\n" % (repo_name, repo_name))
     sites_php_file.close()
+
 
 def create_settings_php(settings, repo_docroot, repo_name):
     """ Creates and populates settings.php """
@@ -111,6 +165,7 @@ def create_settings_php(settings, repo_docroot, repo_name):
                 settings_php_file.write("$conf['%s'] = \"%s\";\n" % (conf, conf_value))
         settings_php_file.close()
 
+
 def configure_site_apache_vhost(platform_path, repo_name):
     """ Creates and populates Apache Vhost """
 
@@ -125,6 +180,7 @@ def configure_site_apache_vhost(platform_path, repo_name):
     vhost = open(apache_vhost_dest, 'w+')
     vhost.write(vhost_content)
     vhost.close()
+
 
 def replace_file_content(file, dic):
     """ Find and replace file content. """
