@@ -88,7 +88,7 @@ def configure_database(repo_name, settings):
 
         try:
             # Create database.
-            subprocess.check_call(["mysql", "-u", "root", "-e", "CREATE DATABASE %s" % repo_name])
+            subprocess.check_call(["mysql", "-u", "root", "-proot", "-e", "CREATE DATABASE %s" % repo_name])
             logging.info("Database '%s' created" % repo_name)
 
             # Import database.

@@ -80,3 +80,6 @@ sudo sed -i "s/root=postmaster/root=${VAGRANT_SMTP_ROOT_EMAIL}/" /etc/ssmtp/ssmt
 echo "UseSTARTTLS=YES" | sudo tee -a /etc/ssmtp/ssmtp.conf
 echo "AuthUser=${VAGRANT_SMTP_ROOT_EMAIL}" | sudo tee -a /etc/ssmtp/ssmtp.conf
 echo "AuthPass=${VAGRANT_SMTP_ROOT_EMAIL_PASSWORD}" | sudo tee -a /etc/ssmtp/ssmtp.conf
+
+# Set up projects configuration.
+sudo python /files/provisioning/bin/python/build-projects.py
