@@ -9,7 +9,6 @@
 #         host: localhost
 #         user: root
 #         passwd: root
-#         db: database
 #
 #       confs:
 #         theme_debug: 1
@@ -25,7 +24,6 @@
 #         host: localhost
 #         user: root
 #         passwd: root
-#         db: database
 #
 #       confs:
 #         theme_debug: 1

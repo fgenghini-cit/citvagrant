@@ -14,6 +14,9 @@ password=root
 [mysqldump]
 user=root
 password=root
+
+[mysqld]
+auto-increment-increment = 5
 EOF
 )
 echo "${MYCNFFILE}" > /home/vagrant/.my.cnf

@@ -148,7 +148,7 @@ def create_settings_php(settings, repo_docroot, repo_name):
 
     mysql = settings['mysql']
     mapping = {
-        '[[DATABASENAME]]': mysql['db'],
+        '[[DATABASENAME]]': repo_name,
         '[[USERNAME]]': mysql['user'],
         '[[PASSWORD]]': mysql['passwd'],
         '[[LOCALHOST]]': mysql['host'],
