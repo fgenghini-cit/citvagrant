@@ -34,6 +34,8 @@ def main():
         os.system("%s rr" % drush)
         os.system("%s updb -y" % drush)
         os.system("%s fra -y" % drush)
+        #TODO: switch to vagrat-config.sh and change the user before execute it.
+        os.system("cd %s;git config core.filemode false;git config push.default nothing;" % repo_docroot)
 
 if __name__ == '__main__':
     # Setup logging.
