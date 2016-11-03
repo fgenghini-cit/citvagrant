@@ -83,4 +83,3 @@ echo "AuthPass=${VAGRANT_SMTP_ROOT_EMAIL_PASSWORD}" | sudo tee -a /etc/ssmtp/ssm
 
 # Set up projects configuration.
 sudo python /files/provisioning/bin/python/build-projects.py
-sudo python /files/provisioning/bin/python/buildscript.py
