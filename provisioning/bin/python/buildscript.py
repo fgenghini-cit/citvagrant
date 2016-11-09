@@ -29,7 +29,7 @@ def main():
             continue
 
         # Set the drush variable.
-        drush = "drush -r %s -l %s.localhost" % (platform_path, repo_name)
+        drush = "drush -r %s -l %s.local" % (platform_path, repo_name)
 
         os.system("%s rr" % drush)
         os.system("%s updb -y" % drush)
